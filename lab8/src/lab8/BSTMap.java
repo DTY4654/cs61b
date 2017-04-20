@@ -1,5 +1,6 @@
 package lab8;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -7,7 +8,6 @@ import java.util.Set;
  * Created by GritShiva on 2017/4/19 0019.
  */
 public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
-
 
 
     private Node root;
@@ -29,7 +29,6 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
 
     @Override
     public void clear() {
-
         root = null;
     }
 
@@ -102,11 +101,34 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
         return x;
     }
 
-    public void printInOrder(){
+
+    // Your BSTMap should also add an additional method printInOrder() (not given in the Map61B interface)
+    // that prints out your BSTMap in order of increasing Key.
+    // You will find this helpful for testing your implementation!
 
 
-        
+    public void printInOrder() {
+        printInOrderHelper(root);
+    }
 
+
+    //不是很会写recursion, 查一下有没有什么通用的方法再多加练习
+    private void printInOrderHelper(Node x){
+        if (x == null){
+            System.out.println("");
+        }else if(x.left == null && x.right == null){
+            System.out.println(x.key +"," + x.value);
+        }else if(x.left != null && x.right == null){
+            printInOrderHelper(x.left);
+            System.out.println(x.key +"," + x.value);
+        }else if(x.left == null & x.right != null){
+            System.out.println(x.key +"," + x.value);
+            printInOrderHelper(x.right);
+        }else{
+            printInOrderHelper(x.left);
+            System.out.println(x.key +"," + x.value);
+            printInOrderHelper(x.right);
+        }
     }
 
 
@@ -129,5 +151,14 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
     @Override
     public Iterator<K> iterator() {
         throw new UnsupportedOperationException();
+    }
+
+    public static void main(String[] args) {
+        BSTMap<String, Integer> b = new BSTMap<String, Integer>();
+        b.put("hi0", 1);
+        b.put("hi3", 1);
+        b.put("hi1", 1);
+        b.put("hi2", 1);
+        b.printInOrder();
     }
 }
