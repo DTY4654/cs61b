@@ -1,0 +1,107 @@
+ This program inserts random Strings of length L
+ Into different types of maps as <String, Integer> pairs.
+
+What would you like L to be?: 5
+
+Enter # strings to insert into ULLMap: 100
+class lab8.ULLMap: 0.02 sec
+
+Enter # strings to insert into your BSTMap: 100
+class lab8.BSTMap: 0.00 sec
+
+Enter # strings to insert into Java's TreeMap: 100
+Java's Built-in TreeMap: 0.00 sec
+
+Enter # strings to insert into ULLMap: 1000
+class lab8.ULLMap: 0.03 sec
+
+Enter # strings to insert into your BSTMap: 1000
+class lab8.BSTMap: 0.03 sec
+
+Enter # strings to insert into Java's TreeMap: 1000
+Java's Built-in TreeMap: 0.00 sec
+
+Enter # strings to insert into ULLMap: 5000
+class lab8.ULLMap: 0.22 sec
+
+Enter # strings to insert into your BSTMap: 5000
+class lab8.BSTMap: 0.03 sec
+
+Enter # strings to insert into Java's TreeMap: 5000
+Java's Built-in TreeMap: 0.02 sec
+
+Enter # strings to insert into ULLMap: 10000
+class lab8.ULLMap: 0.88 sec
+
+Enter # strings to insert into your BSTMap: 10000
+class lab8.BSTMap: 0.03 sec
+
+Enter # strings to insert into Java's TreeMap: 10000
+Java's Built-in TreeMap: 0.02 sec
+
+Enter # strings to insert into ULLMap: 20000
+class lab8.ULLMap: 3.81 sec
+
+Enter # strings to insert into your BSTMap: 20000
+class lab8.BSTMap: 0.03 sec
+
+Enter # strings to insert into Java's TreeMap: 20000
+Java's Built-in TreeMap: 0.02 sec
+
+
+
+
+ This program inserts lexicographically increasing Stringsinto Maps as <String, Integer> pairs.
+
+Enter # strings to insert into ULLMap: 
+
+Enter # strings to insert into ULLMap: 100
+class lab8.ULLMap: 0.02 sec
+
+Enter # strings to insert into BSTMap: 100
+class lab8.BSTMap: 0.03 sec
+
+Enter # strings to insert into Java's TreeMap: 100
+Java's Built-in TreeMap: 0.00 sec
+
+
+Enter # strings to insert into ULLMap: 1000
+class lab8.ULLMap: 0.02 sec
+
+Enter # strings to insert into BSTMap: 1000
+class lab8.BSTMap: 0.03 sec
+
+Enter # strings to insert into Java's TreeMap: 1000
+Java's Built-in TreeMap: 0.02 sec
+
+
+Enter # strings to insert into ULLMap: 5000
+class lab8.ULLMap: 0.42 sec
+
+Enter # strings to insert into BSTMap: 5000
+class lab8.BSTMap: 0.44 sec
+
+Enter # strings to insert into Java's TreeMap: 5000
+Java's Built-in TreeMap: 0.02 sec
+
+Enter # strings to insert into ULLMap: 10000
+class lab8.ULLMap: 1.83 sec
+
+Enter # strings to insert into BSTMap: 10000
+class lab8.BSTMap: 2.39 sec
+
+Enter # strings to insert into Java's TreeMap: 10000
+Java's Built-in TreeMap: 0.03 sec
+
+
+Enter # strings to insert into ULLMap: 20000
+class lab8.ULLMap: 7.48 sec
+
+Enter # strings to insert into BSTMap: 20000
+class lab8.BSTMap: 8.90 sec
+
+Enter # strings to insert into Java's TreeMap: 20000
+Java's Built-in TreeMap: 0.05 sec
+
+
+when inserting lexicographically increasing Stringsinto Maps as <String, Integer> pairs, BSTMap is slow, even slower than ULLMap, and TreeMap is the fastest.
