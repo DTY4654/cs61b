@@ -18,6 +18,8 @@ public class TestBSTMap {
         }
     }
 
+
+
     //assumes put/size/containsKey/get work
     @Test
     public void sanityClearTest() {
