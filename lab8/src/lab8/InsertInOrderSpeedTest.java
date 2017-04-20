@@ -1,4 +1,5 @@
 package lab8;
+import java.util.HashMap;
 import java.util.TreeMap;
 import java.io.IOException;
 import java.util.Scanner;
@@ -38,6 +39,10 @@ public class InsertInOrderSpeedTest {
             timeInOrderTreeMap(new TreeMap<String, Integer>(),
                     i.waitForPositiveInt(input));
 
+            System.out.print("\nEnter # strings to insert into Java's HashMap: ");
+            timeInOrderHashMap(new HashMap<String, Integer>(),
+                    i.waitForPositiveInt(input));
+
             System.out.print("\nWould you like to try more timed-tests? (y/n): ");
             repeat = input.nextLine();
         } while (!repeat.equalsIgnoreCase("n") && !repeat.equalsIgnoreCase("no"));
@@ -70,6 +75,18 @@ public class InsertInOrderSpeedTest {
         return sw.elapsedTime();
     }
 
+    /** Returns time needed to put N strings into HashMap in increasing order.
+     */
+    public static double insertInOrder(HashMap<String, Integer> hashMap, int N) {
+        Stopwatch sw = new Stopwatch();
+        String s = "cat";
+        for (int i = 0; i < N; i++) {
+            s = StringUtils.nextString(s);
+            hashMap.put(s, new Integer(i));
+        }
+        return sw.elapsedTime();
+    }
+
     /*
         Attempts to insert N in-order strings of length L into map,
         Prints time of the N insert calls, otherwise
@@ -95,6 +112,22 @@ public class InsertInOrderSpeedTest {
         try {
             double javaTime = insertInOrder(treeMap, N);
             System.out.printf("Java's Built-in TreeMap: %.2f sec\n", javaTime);
+        } catch (StackOverflowError e) {
+            printInfoOnStackOverflow(N);
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /*
+       Attempts to insert N in-order strings of length L into HashMap,
+       Prints time of the N insert calls, otherwise
+       Prints a nice message about the error
+   */
+    public static void timeInOrderHashMap(HashMap<String, Integer> hashMap, int N) {
+        try {
+            double javaTime = insertInOrder(hashMap, N);
+            System.out.printf("Java's Built-in HashMap: %.2f sec\n", javaTime);
         } catch (StackOverflowError e) {
             printInfoOnStackOverflow(N);
         } catch (RuntimeException e) {
