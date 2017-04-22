@@ -5,6 +5,7 @@ import lab9.MyHashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+
 /** Tests by Brendan Hu, Spring 2015, revised for 2016 by Josh Hug */
 public class TestMyHashMap {
 
@@ -118,26 +119,35 @@ public class TestMyHashMap {
         MyHashMap<String, Integer> studentIDs = new MyHashMap<>();
         studentIDs.put("sarah", 12345);
         assertEquals(1, studentIDs.size());
-        assertEquals(12345, studentIDs.get("sarah").intValue());
+        //assertEquals(12345, studentIDs.get("sarah").intValue());
+        assertEquals(12345, studentIDs.get("sarah"));
         studentIDs.put("alan", 345);
         assertEquals(2, studentIDs.size());
-        assertEquals(12345, studentIDs.get("sarah").intValue());
-        assertEquals(345, studentIDs.get("alan").intValue());
+        //assertEquals(12345, studentIDs.get("sarah").intValue());
+        assertEquals(12345, studentIDs.get("sarah"));
+        //assertEquals(345, studentIDs.get("alan").intValue());
+        assertEquals(345, studentIDs.get("alan"));
         studentIDs.put("alan", 345);
         assertEquals(2, studentIDs.size());
-        assertEquals(12345, studentIDs.get("sarah").intValue());
-        assertEquals(345, studentIDs.get("alan").intValue());
+        //assertEquals(12345, studentIDs.get("sarah").intValue());
+        assertEquals(12345, studentIDs.get("sarah"));
+        //assertEquals(345, studentIDs.get("alan").intValue());
+        assertEquals(345, studentIDs.get("alan"));
         studentIDs.put("alan", 345);
         assertEquals(2, studentIDs.size());
-        assertEquals(12345, studentIDs.get("sarah").intValue());
-        assertEquals(345, studentIDs.get("alan").intValue());
+        //assertEquals(12345, studentIDs.get("sarah").intValue());
+        assertEquals(12345, studentIDs.get("sarah"));
+        //assertEquals(345, studentIDs.get("alan").intValue());
+        assertEquals(345, studentIDs.get("alan"));
         assertTrue(studentIDs.containsKey("sarah"));
         assertTrue(studentIDs.containsKey("alan"));
 
         // handle values being the same
-        assertEquals(345, studentIDs.get("alan").intValue());
+        //assertEquals(345, studentIDs.get("alan").intValue());
+        assertEquals(345, studentIDs.get("alan"));
         studentIDs.put("evil alan", 345);
-        assertEquals(345, studentIDs.get("evil alan").intValue());
+        //assertEquals(345, studentIDs.get("evil alan").intValue());
+        assertEquals(345, studentIDs.get("evil alan"));
         assertEquals(studentIDs.get("evil alan"), studentIDs.get("alan"));
     }
 
