@@ -10,7 +10,8 @@ public class MyHashMap<K,V> implements Map61B<K,V> {
     private ArrayList<Entry<K,V>> buckets;
     private int size;
     private float loadFactor;
-    private HashSet<K> kHashSet;
+
+
 
 
     private static class Entry<K,V> implements Map.Entry<K,V> {
@@ -34,7 +35,8 @@ public class MyHashMap<K,V> implements Map61B<K,V> {
         }
 
         public V setValue (V x) {
-            V old = value; value = x; return old;
+            V old = value; value = x;
+            return old;
         }
 
 
@@ -160,7 +162,16 @@ public class MyHashMap<K,V> implements Map61B<K,V> {
 
     @Override
     public Set keySet() {
-        
+        Set<K> keySet = new HashSet<>();
+        for(int i = 0; i < this.buckets.size(); i++){
+            Entry<K,V> first = this.buckets.get(i);
+            keySet.add(first.key);
+            while(first.next != null){
+                first = first.next;
+                keySet.add(first.key);
+            }
+        }
+        return keySet;
     }
 
     @Override
@@ -175,10 +186,6 @@ public class MyHashMap<K,V> implements Map61B<K,V> {
 
     @Override
     public Iterator iterator() {
-        this.kHashSet = new HashSet<K>();
-        for(int i = 0; i < buckets.size(); i++){
-            kHashSet.add(buckets.get(i).key);
-        }
-        return kHashSet.iterator();
+        return keySet().iterator();
     }
 }
