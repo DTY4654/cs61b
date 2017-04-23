@@ -1,6 +1,5 @@
 package lab9;
 
-
 import java.util.*;
 
 /**
@@ -14,7 +13,7 @@ public class MyHashMap<K,V> implements Map61B<K,V> {
     private HashSet<K> kHashSet;
 
 
-    private static class Entry<K,V> {
+    private static class Entry<K,V> implements Map.Entry<K,V> {
 
         K key;
         V value;
@@ -38,6 +37,26 @@ public class MyHashMap<K,V> implements Map61B<K,V> {
             V old = value; value = x; return old;
         }
 
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+
+            Entry<?, ?> entry = (Entry<?, ?>) o;
+
+            if (key != null ? !key.equals(entry.key) : entry.key != null) return false;
+            if (value != null ? !value.equals(entry.value) : entry.value != null) return false;
+            return next != null ? next.equals(entry.next) : entry.next == null;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = key != null ? key.hashCode() : 0;
+            result = 31 * result + (value != null ? value.hashCode() : 0);
+            result = 31 * result + (next != null ? next.hashCode() : 0);
+            return result;
+        }
     }
 
 
@@ -56,6 +75,7 @@ public class MyHashMap<K,V> implements Map61B<K,V> {
             throw new IllegalArgumentException();
         }
         buckets = new ArrayList<Entry<K,V>>(initialSize);
+        buckets.addAll(Collections.nCopies(initialSize, null));
         this.size = 0;
         this.loadFactor = (float) loadFactor;
     }
@@ -70,7 +90,10 @@ public class MyHashMap<K,V> implements Map61B<K,V> {
 
     @Override
     public void clear() {
-        size = 0;
+        for(int i = 0; i < buckets.size(); i ++){
+            buckets.set(i, null);
+        }
+        this.size = 0;
     }
 
     @Override
@@ -103,7 +126,8 @@ public class MyHashMap<K,V> implements Map61B<K,V> {
 
     private int hash(Object key){
         return (key == null) ? 0
-                : (0x7fffffff & key.hashCode ()) % buckets.size ();
+                : (0x7fffffff & key.hashCode ()) % buckets.size();
+       // return (key.hashCode() & 0x7fffffff) & buckets.size();
     }
 
 
@@ -118,7 +142,7 @@ public class MyHashMap<K,V> implements Map61B<K,V> {
     public void put(Object key, Object value) {
         int h = hash(key);
         Entry<K,V> e = find(key, buckets.get(h));
-        if(e == null){
+        if (e == null){
             buckets.set(h, new Entry<>((K) key, (V) value, buckets.get(h)));
             size += 1;
             if(size > buckets.size() * loadFactor){
@@ -136,11 +160,7 @@ public class MyHashMap<K,V> implements Map61B<K,V> {
 
     @Override
     public Set keySet() {
-        this.kHashSet = new HashSet<K>();
-        for(int i = 0; i < buckets.size(); i++){
-            kHashSet.add(buckets.get(i).key);
-        }
-        return kHashSet;
+        
     }
 
     @Override
