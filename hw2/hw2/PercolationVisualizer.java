@@ -78,10 +78,12 @@ public class PercolationVisualizer {
             draw(perc, N);
             StdDraw.show(DELAY);
         }
+
     }
 
     public static void main(String[] args) {
         String filename = args[0];
         simulateFromFile(filename);
+
     }
 }
