@@ -8,8 +8,6 @@ public class Percolation {
     private WeightedQuickUnionUF uf;
 
 
-
-
     // create N-by-N grid, with all sites initially blocked
     public Percolation(int N) {
         if( N <= 0){
@@ -18,10 +16,11 @@ public class Percolation {
         this.isGridOpened = new boolean[N][N];
         this.gridSize = N;
         for( int i = 0; i < N; i++){
-            this.isGridOpened [i][i] = false;
+            for(int j = 0; j < N; j++) {
+                this.isGridOpened[i][j] = false;
+            }
         }
         this.uf = new WeightedQuickUnionUF( N * N );
-
     }
 
 
@@ -30,38 +29,28 @@ public class Percolation {
         if(row < 0 || row > gridSize - 1 || col < 0 || col > gridSize - 1){
             throw new IndexOutOfBoundsException();
         }
-        if(this.isGridOpened[row][col]){
+        if(isGridOpened[row][col]){
             return;
         } else{
-            this.isGridOpened [row][col] = true;
+            isGridOpened [row][col] = true;
         }
 
         //if left,right,top,bottom block is open, connect them.
-
-        while( col + 1< gridSize - 1 ) {
-            if (isOpen(row, col + 1)) {
-                uf.union(xyTo1D(row, col), xyTo1D(row, col + 1));
-            }
+        if (col + 1< gridSize  && isOpen(row, col + 1)) {
+            uf.union(xyTo1D(row, col), xyTo1D(row, col + 1));
         }
 
-        while(col - 1 > 0 ) {
-            if (isOpen(row, col - 1)) {
-                uf.union(xyTo1D(row, col), xyTo1D(row, col - 1));
-            }
+        if (col - 1 >= 0 && isOpen(row, col - 1)) {
+            uf.union(xyTo1D(row, col), xyTo1D(row, col - 1));
         }
 
-        while( row + 1 < gridSize - 1 ){
-            if(isOpen(row + 1, col)){
-                uf.union(xyTo1D(row,col),xyTo1D(row + 1, col));
-            }
+        if( row + 1 < gridSize  && isOpen(row + 1, col)){
+            uf.union(xyTo1D(row,col),xyTo1D(row + 1, col));
         }
 
-        while(row - 1 > 0) {
-            if (isOpen(row - 1, col)) {
-                uf.union(xyTo1D(row, col), xyTo1D(row - 1, col));
-            }
+        if (row - 1 >= 0 && isOpen(row - 1, col)) {
+            uf.union(xyTo1D(row, col), xyTo1D(row - 1, col));
         }
-
     }
 
 
@@ -74,6 +63,8 @@ public class Percolation {
         return this.isGridOpened[row][col];
     }
 
+
+
     private int xyTo1D (int row, int col){
         if(row < 0 || row > gridSize - 1 || col < 0 || col > gridSize - 1){
             throw new IndexOutOfBoundsException();
@@ -81,15 +72,18 @@ public class Percolation {
         return row * gridSize + col;
     }
 
-    // is the site (row, col) full?  is connected to top
-    public boolean isFull(int row, int col){
-        if(row < 0 || row > gridSize - 1 || col < 0 || col > gridSize - 1){
-            throw new IndexOutOfBoundsException();
-        }
 
-        for(int i = 0; i < gridSize; i++ ){
-            if(uf.connected(xyTo1D(row, col), i)){
-                return true;
+    // is the site (row, col) full?  is connected to top
+    public boolean isFull(int row, int col) {
+        if (row < 0 || row > gridSize - 1 || col < 0 || col > gridSize - 1) {
+            throw new IndexOutOfBoundsException();
+        } else if (row == 0 && isOpen(row, col)) {
+            return true;
+        } else if (row != 0) {
+            for(int i = 0; i < gridSize; i++) {
+                if (isOpen(row, col) && isOpen(0, i) && uf.connected(xyTo1D(row,col), i)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -106,15 +100,15 @@ public class Percolation {
     // number of open sites
     // Your numberOfOpenSites() method must take constant time.
     public int numberOfOpenSites(){
-        int count = 0;
+        int openedSites = 0;
         for(int i = 0; i < gridSize; i++){
             for( int j = 0; j < gridSize; j++){
                 if (isGridOpened[i][j]){
-                    count ++;
+                    openedSites += 1;
                 }
             }
         }
-        return count;
+        return openedSites;
     }
 
 
@@ -129,10 +123,28 @@ public class Percolation {
         }
         return false;
     }
+//3
+//        0 2
+//        1 2
+//        2 2
+//        2 0
+//        1 0
+//        0 0
 
-    // unit testing (not required)
+
+
     public static void main(String[] args) {
+        Percolation p = new Percolation(3);
+        p.open(0,2);
+        p.open(1,2);
+        p.open(2,2);
+        p.open(2,0);
+        p.open(1,0);
+        p.open(0,0);
 
+        System.out.println(" is ( 0,2) fulled?" + p.isFull(0,2));
+        System.out.println(" is ( 1,2) fulled?" + p.isFull(1,2));
+        System.out.println(" is ( 1,2) and (0,2) connected>" + p.uf.connected(p.xyTo1D(0,2), p.xyTo1D(1,2)));
 
     }
 
