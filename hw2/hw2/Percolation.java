@@ -5,7 +5,9 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 public class Percolation {
     private int gridSize;
     private boolean [][] isGridOpened;
+    private int numOfOpenSites;
     private WeightedQuickUnionUF uf;
+
 
 
     // create N-by-N grid, with all sites initially blocked
@@ -20,6 +22,7 @@ public class Percolation {
                 this.isGridOpened[i][j] = false;
             }
         }
+        this.numOfOpenSites = 0;
         this.uf = new WeightedQuickUnionUF( N * N );
     }
 
@@ -33,6 +36,7 @@ public class Percolation {
             return;
         } else{
             isGridOpened [row][col] = true;
+            numOfOpenSites += 1;
         }
 
         //if left,right,top,bottom block is open, connect them.
@@ -90,7 +94,7 @@ public class Percolation {
     }
 
 
-    // all methods should take constant time plus a constant number of calls to
+    // Performance requirements: all methods should take constant time plus a constant number of calls to
     // the union-find methods union(), find(), connected(), and count().
     // Meeting these requirements is somewhat tricky! You might consider creating a solution that simply works,
     // before figuring out a way to make it faster. For tips on meeting the speed requirements,
@@ -100,15 +104,7 @@ public class Percolation {
     // number of open sites
     // Your numberOfOpenSites() method must take constant time.
     public int numberOfOpenSites(){
-        int openedSites = 0;
-        for(int i = 0; i < gridSize; i++){
-            for( int j = 0; j < gridSize; j++){
-                if (isGridOpened[i][j]){
-                    openedSites += 1;
-                }
-            }
-        }
-        return openedSites;
+        return numOfOpenSites;
     }
 
 
@@ -137,10 +133,14 @@ public class Percolation {
         Percolation p = new Percolation(3);
         p.open(0,2);
         p.open(1,2);
+        System.out.println(p.numberOfOpenSites());
         p.open(2,2);
+
         p.open(2,0);
         p.open(1,0);
+        System.out.println(p.numberOfOpenSites());
         p.open(0,0);
+
 
         System.out.println(" is ( 0,2) fulled?" + p.isFull(0,2));
         System.out.println(" is ( 1,2) fulled?" + p.isFull(1,2));
