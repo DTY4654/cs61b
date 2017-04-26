@@ -3,7 +3,7 @@ package hw2;
 import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
-    private int gridSize;
+    private int N;
     private boolean [][] isGridOpened;
     private int numOfOpenSites;
     private WeightedQuickUnionUF uf;
@@ -16,20 +16,29 @@ public class Percolation {
             throw new IllegalArgumentException();
         }
         this.isGridOpened = new boolean[N][N];
-        this.gridSize = N;
+        this.N = N;
         for( int i = 0; i < N; i++){
             for(int j = 0; j < N; j++) {
                 this.isGridOpened[i][j] = false;
             }
         }
         this.numOfOpenSites = 0;
-        this.uf = new WeightedQuickUnionUF( N * N );
+        this.uf = new WeightedQuickUnionUF( N * N + 2 );
+
     }
+
+
+
+
+
+    // Performance requirements: all methods should take constant time plus a constant number of calls to
+    // the union-find methods union(), find(), connected(), and count().
+
 
 
     // open the site (row, col) if it is not open already
     public void open(int row, int col) {
-        if(row < 0 || row > gridSize - 1 || col < 0 || col > gridSize - 1){
+        if(row < 0 || row > N - 1 || col < 0 || col > N - 1){
             throw new IndexOutOfBoundsException();
         }
         if(isGridOpened[row][col]){
@@ -37,10 +46,16 @@ public class Percolation {
         } else{
             isGridOpened [row][col] = true;
             numOfOpenSites += 1;
+            if(row == 0){
+                uf.union(xyTo1D(row,col), N*N);
+            }
+            if(row == N -1 ){
+                uf.union(xyTo1D(row,col), N*N +1);
+            }
         }
 
         //if left,right,top,bottom block is open, connect them.
-        if (col + 1< gridSize  && isOpen(row, col + 1)) {
+        if (col + 1< N  && isOpen(row, col + 1)) {
             uf.union(xyTo1D(row, col), xyTo1D(row, col + 1));
         }
 
@@ -48,7 +63,7 @@ public class Percolation {
             uf.union(xyTo1D(row, col), xyTo1D(row, col - 1));
         }
 
-        if( row + 1 < gridSize  && isOpen(row + 1, col)){
+        if( row + 1 < N  && isOpen(row + 1, col)){
             uf.union(xyTo1D(row,col),xyTo1D(row + 1, col));
         }
 
@@ -61,7 +76,7 @@ public class Percolation {
 
     // is the site (row, col) open?
     public boolean isOpen(int row, int col){
-        if(row < 0 || row > gridSize - 1 || col < 0 || col > gridSize - 1){
+        if(row < 0 || row > N - 1 || col < 0 || col > N - 1){
             throw new IndexOutOfBoundsException();
         }
         return this.isGridOpened[row][col];
@@ -70,35 +85,22 @@ public class Percolation {
 
 
     private int xyTo1D (int row, int col){
-        if(row < 0 || row > gridSize - 1 || col < 0 || col > gridSize - 1){
+        if(row < 0 || row > N - 1 || col < 0 || col > N - 1){
             throw new IndexOutOfBoundsException();
         }
-        return row * gridSize + col;
+        return row * N + col;
     }
 
 
     // is the site (row, col) full?  is connected to top
     public boolean isFull(int row, int col) {
-        if (row < 0 || row > gridSize - 1 || col < 0 || col > gridSize - 1) {
+        if (row < 0 || row > N - 1 || col < 0 || col > N - 1) {
             throw new IndexOutOfBoundsException();
-        } else if (row == 0 && isOpen(row, col)) {
-            return true;
-        } else if (row != 0) {
-            for(int i = 0; i < gridSize; i++) {
-                if (isOpen(row, col) && isOpen(0, i) && uf.connected(xyTo1D(row,col), i)) {
-                    return true;
-                }
-            }
+        } else {
+            return uf.connected(N * N , xyTo1D(row,col));
         }
-        return false;
+
     }
-
-
-    // Performance requirements: all methods should take constant time plus a constant number of calls to
-    // the union-find methods union(), find(), connected(), and count().
-    // Meeting these requirements is somewhat tricky! You might consider creating a solution that simply works,
-    // before figuring out a way to make it faster. For tips on meeting the speed requirements,
-    // see the video at the beginning of this spec. Your numberOfOpenSites() method must take constant time.
 
 
     // number of open sites
@@ -110,15 +112,10 @@ public class Percolation {
 
     // does the system percolate?
     public boolean percolates(){
-        for(int i = gridSize  * (gridSize - 1) ; i < gridSize * gridSize - 1; i++) {
-            for (int j = 0; j < gridSize; j++) {
-                if (uf.connected(i, j)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return uf.connected(N * N , N * N + 1);
     }
+
+    
 //3
 //        0 2
 //        1 2
