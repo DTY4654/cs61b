@@ -7,6 +7,7 @@ public class Percolation {
     private boolean [][] isGridOpened;
     private int numOfOpenSites;
     private WeightedQuickUnionUF uf;
+    private WeightedQuickUnionUF noBackWash;
 
 
 
@@ -24,6 +25,7 @@ public class Percolation {
         }
         this.numOfOpenSites = 0;
         this.uf = new WeightedQuickUnionUF( N * N + 2 );
+        this.noBackWash = new WeightedQuickUnionUF( N * N + 1);
 
     }
 
@@ -48,6 +50,7 @@ public class Percolation {
             numOfOpenSites += 1;
             if(row == 0){
                 uf.union(xyTo1D(row,col), N*N);
+                noBackWash.union(xyTo1D(row,col), N*N);
             }
             if(row == N -1 ){
                 uf.union(xyTo1D(row,col), N*N +1);
@@ -57,18 +60,22 @@ public class Percolation {
         //if left,right,top,bottom block is open, connect them.
         if (col + 1< N  && isOpen(row, col + 1)) {
             uf.union(xyTo1D(row, col), xyTo1D(row, col + 1));
+            noBackWash.union(xyTo1D(row, col), xyTo1D(row, col + 1));
         }
 
         if (col - 1 >= 0 && isOpen(row, col - 1)) {
             uf.union(xyTo1D(row, col), xyTo1D(row, col - 1));
+            noBackWash.union(xyTo1D(row, col), xyTo1D(row, col - 1));
         }
 
         if( row + 1 < N  && isOpen(row + 1, col)){
             uf.union(xyTo1D(row,col),xyTo1D(row + 1, col));
+            noBackWash.union(xyTo1D(row,col),xyTo1D(row + 1, col));
         }
 
         if (row - 1 >= 0 && isOpen(row - 1, col)) {
             uf.union(xyTo1D(row, col), xyTo1D(row - 1, col));
+            noBackWash.union(xyTo1D(row, col), xyTo1D(row - 1, col));
         }
     }
 
@@ -97,7 +104,7 @@ public class Percolation {
         if (row < 0 || row > N - 1 || col < 0 || col > N - 1) {
             throw new IndexOutOfBoundsException();
         } else {
-            return uf.connected(N * N , xyTo1D(row,col));
+            return noBackWash.connected(N * N , xyTo1D(row,col));
         }
 
     }
@@ -128,20 +135,15 @@ public class Percolation {
 
     public static void main(String[] args) {
         Percolation p = new Percolation(3);
-        p.open(0,2);
-        p.open(1,2);
-        System.out.println(p.numberOfOpenSites());
+        p.open(0,0);
+        p.open(1,0);
+        p.open(2,0);
         p.open(2,2);
 
-        p.open(2,0);
-        p.open(1,0);
-        System.out.println(p.numberOfOpenSites());
-        p.open(0,0);
 
-
-        System.out.println(" is ( 0,2) fulled?" + p.isFull(0,2));
+        System.out.println(" is ( 2,2) fulled?" + p.isFull(2,2));
         System.out.println(" is ( 1,2) fulled?" + p.isFull(1,2));
-        System.out.println(" is ( 1,2) and (0,2) connected>" + p.uf.connected(p.xyTo1D(0,2), p.xyTo1D(1,2)));
+//        System.out.println(" is ( 1,2) and (0,2) connected>" + p.uf.connected(p.xyTo1D(0,2), p.xyTo1D(1,2)));
 
     }
 
