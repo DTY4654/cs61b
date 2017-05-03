@@ -1,5 +1,6 @@
-package hw4.hash;
+package hw3.hash;
 
+import edu.princeton.cs.algs4.StdRandom;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -23,9 +24,23 @@ public class TestSimpleOomage {
     @Test
     public void testHashCodePerfect() {
         /* TODO: Write a test that ensures the hashCode is perfect,
-          meaning no two SimpleOomages should EVER have the same
-          hashCode!
-         */
+         meaning no two SimpleOomages should EVER have the same
+         hashCode!
+         Hint: Try out every possible combination of red, green, and blue values and
+         ensure that you never see the same value more than once.
+        */
+        ArrayList<Integer> hashList = new ArrayList<>();
+        for(int i = 0; i < 256; i += 5){
+            for(int j = 0; j <256; j += 5){
+                for(int k = 0; k < 256; k += 5){
+                    SimpleOomage soA = new SimpleOomage(i,j,k);
+                    int hash = soA.hashCode();
+                    hashList.add(hash);
+                }
+            }
+        }
+        HashSet<Integer> set = new HashSet(hashList);
+        assertEquals(hashList.size(), set.size());
     }
 
     @Test

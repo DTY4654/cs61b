@@ -1,11 +1,11 @@
-package hw4.hash;
+package hw3.hash;
 import java.util.List;
 import java.util.ArrayList;
 import edu.princeton.cs.algs4.StdDraw;
 import java.awt.Color;
 import edu.princeton.cs.algs4.StdRandom;
 
-public class ComplexOomage implements Oomage {
+public class ComplexOomage implements hw3.hash.Oomage {
     protected List<Integer> params;
     private static final double WIDTH = 0.05;
 
@@ -19,6 +19,7 @@ public class ComplexOomage implements Oomage {
         return total;
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (o.getClass() != this.getClass()) {
@@ -30,7 +31,7 @@ public class ComplexOomage implements Oomage {
 
     public ComplexOomage(List<Integer> params) {
         if (params == null) {
-            throw new IllegalArgumentException("params must not be null!");            
+            throw new IllegalArgumentException("params must not be null!");
         }
 
         for (Integer x : params) {
@@ -87,4 +88,4 @@ public class ComplexOomage implements Oomage {
         randomComplexOomage().draw(0.25, 0.75, 1.5);
         randomComplexOomage().draw(0.75, 0.25, 1.5);
     }
-} 
+}
