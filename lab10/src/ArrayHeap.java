@@ -1,4 +1,7 @@
 import org.junit.Test;
+
+import java.util.Comparator;
+
 import static org.junit.Assert.*;
 
 /**
@@ -7,14 +10,15 @@ import static org.junit.Assert.*;
  * (represented by type T), along with a priority value. Why do it this way? It
  * will be useful later on in the class...
  */
-public class ArrayHeap<T> implements ExtrinsicPQ<T> {
+public class ArrayHeap<T> {
     private Node[] contents;
     private int size;
+    private Comparator<Node> comparator;
 
     public ArrayHeap() {
         contents = new ArrayHeap.Node[16];
 
-        /* Add a dummy item at the front of the ArrayHeap so that the getLeft,
+        /* Add a dummy item at the front of the src.ArrayHeap so that the getLeft,
          * getRight, and parent methods are nicer. */
         contents[0] = null;
 
@@ -23,20 +27,47 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         size = 0;
     }
 
+
+    private class Node {
+        private T myItem;
+        private double myPriority;
+
+        private Node(T item, double priority) {
+            myItem = item;
+            myPriority = priority;
+        }
+
+        public T item(){
+            return myItem;
+        }
+
+        public double priority() {
+            return myPriority;
+        }
+
+        @Override
+        public String toString() {
+            return myItem.toString() + ", " + myPriority;
+        }
+    }
+
+
+
+
     /**
-     * Returns the index of the node to the left of the node at i.
+     * Returns the index of the node to the left of the node at i.  (left child)
      */
     private static int leftIndex(int i) {
         /* TODO: Your code here! */
-        return 0;
+        return 2*i;
     }
 
     /**
-     * Returns the index of the node to the right of the node at i.
+     * Returns the index of the node to the right of the node at i.  (right child)
      */
     private static int rightIndex(int i) {
         /* TODO: Your code here! */
-        return 0;
+        return 2*i + 1;
     }
 
     /**
@@ -44,7 +75,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
      */
     private static int parentIndex(int i) {
         /* TODO: Your code here! */
-        return 0;
+        return i/2;
     }
 
     /**
@@ -108,8 +139,12 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         validateSinkSwimArg(index);
 
         /** TODO: Your code here. */
-        return;
+        while(index > 1 && greater(index/2, index)){
+            swap(index, index/2);
+            index = index/2;
+        }
     }
+
 
     /**
      * Bubbles down the node currently at the given index.
@@ -119,7 +154,29 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         validateSinkSwimArg(index);
 
         /** TODO: Your code here. */
-        return;
+        int k = index;
+        while( 2 * k <= this.size ){
+            int j = 2 * k;
+            if( j < this.size() && greater(j, j + 1)){
+                j += 1;
+            }
+            if(!greater( k, j)){
+                break;
+            }
+            swap(k, j);
+            k = j;
+        }
+
+    }
+
+
+    private boolean greater(int i, int j){
+        if(comparator == null){
+            return ((Comparable<Node>) contents[i]).compareTo(contents[j]) > 0;
+        }else{
+            return comparator.compare(contents[i],contents[j]) > 0;
+        }
+
     }
 
     /**
@@ -134,6 +191,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         }
 
         /* TODO: Your code here! */
+
     }
 
     /**
@@ -229,28 +287,7 @@ public class ArrayHeap<T> implements ExtrinsicPQ<T> {
         }
     }
 
-    private class Node {
-        private T myItem;
-        private double myPriority;
 
-        private Node(T item, double priority) {
-            myItem = item;
-            myPriority = priority;
-        }
-
-        public T item(){
-            return myItem;
-        }
-
-        public double priority() {
-            return myPriority;
-        }
-
-        @Override
-        public String toString() {
-            return myItem.toString() + ", " + myPriority;
-        }
-    }
 
 
     /** Helper function to resize the backing array when necessary. */

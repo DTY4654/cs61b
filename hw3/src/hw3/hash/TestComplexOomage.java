@@ -34,6 +34,13 @@ public class TestComplexOomage {
 
     /* TODO: Create a list of Complex Oomages called deadlyList
      * that shows the flaw in the hashCode function.
+     *
+     * By carefully inspecting the given hashCode function, devise a test testWithDeadlyParams
+     * that this hashCode function fails due to poor distribution of ComplexOomage objects.
+     * Given what we've learned in 61B so far, this is a really tricky problem!
+     * Consider how Java represents integers in binary (see lecture 23 for a review). For a hint, see Hint.java.
+     * Your test should not fail due to an IllegalArgumentException.
+     * Once you've written this test and ComplexOomage fails it, you're done with HW3!
      */
 
     @Test
@@ -43,7 +50,7 @@ public class TestComplexOomage {
         // Your code here.
 
         assertTrue(OomageTestUtility.haveNiceHashCodeSpread(deadlyList, 10));
-    } 
+    }
 
     /** Calls tests for SimpleOomage. */
     public static void main(String[] args) {
