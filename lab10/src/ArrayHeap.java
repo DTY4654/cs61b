@@ -67,8 +67,9 @@ public class ArrayHeap<T> {
         // TODO Complete this method!
         swap(1, contents.size() - 1);
         Node min = contents.get(contents.size() - 1);
-        bubbleDown(1);
         contents.remove(contents.size() - 1);
+        bubbleDown(1);
+
         return  min;
     }
 
@@ -246,8 +247,6 @@ public class ArrayHeap<T> {
 
     public static void main(String[] args) {
         ArrayHeap<String> heap = new ArrayHeap<String>();
-        System.out.println(heap.contents.get(0));
-        System.out.println(heap.contents.size());
         heap.insert("c", 3);
         heap.insert("i", 9);
         heap.insert("g", 7);
