@@ -29,20 +29,12 @@ public class MazeBreadthFirstPaths extends MazeExplorer {
     private void bfs(int s) {
         /* Your code here. */
 
-        if( s == t){
-            targetFound = true;
-        }
 
-        if(targetFound) {
-            return;
-        }
 
         Queue<Integer> q = new PriorityQueue<>();
         distTo[s] = 0;
         marked[s] = true;
         announce();
-
-
         q.add(s);
 
         while(!q.isEmpty()) {
@@ -55,7 +47,7 @@ public class MazeBreadthFirstPaths extends MazeExplorer {
                     marked[w] = true;
                     announce();
                     q.add(w);
-                    if (targetFound) {
+                    if(marked[t]){
                         return;
                     }
                 }
