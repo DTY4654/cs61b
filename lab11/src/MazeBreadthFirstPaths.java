@@ -28,9 +28,7 @@ public class MazeBreadthFirstPaths extends MazeExplorer {
     /** Conducts a breadth first search of the maze starting at vertex x. */
     private void bfs(int s) {
         /* Your code here. */
-
-
-
+        
         Queue<Integer> q = new PriorityQueue<>();
         distTo[s] = 0;
         marked[s] = true;
