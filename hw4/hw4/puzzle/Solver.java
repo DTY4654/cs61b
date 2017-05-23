@@ -4,9 +4,7 @@
 package hw4.puzzle;
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.MinPQ;
-import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.StdOut;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -27,25 +25,25 @@ public class Solver {
 
     public Solver(Board initial){
 
-        this.initialBoard = initial;
-        this.searchNodes = new MinPQ<>(byPriority);
+            this.initialBoard = initial;
+            this.searchNodes = new MinPQ<>(byPriority);
 
-        SearchNode rootNode = new SearchNode(initial, 0, null);
-        searchNodes.insert(rootNode);
+            SearchNode rootNode = new SearchNode(initial, 0, null);
+            searchNodes.insert(rootNode);
 
-        SearchNode nodeToDelete;
+            SearchNode nodeToDelete;
 
-        while(!searchNodes.min().currentState.isGoal()) {
+            while(!searchNodes.min().currentState.isGoal()) {
 
-            nodeToDelete = searchNodes.delMin();
+                nodeToDelete = searchNodes.delMin();
 
-
-            for(Board neighbor : Board.neighbors(nodeToDelete.getState())){
-                if(!alreadyExisted(nodeToDelete, neighbor)){
-                    searchNodes.insert(new SearchNode(neighbor, nodeToDelete.getMoves() + 1, nodeToDelete ));
+                for(Board neighbor : Board.neighbors(nodeToDelete.getState())){
+                    if(!alreadyExisted(nodeToDelete, neighbor)){
+                        searchNodes.insert(new SearchNode(neighbor, nodeToDelete.getMoves() + 1, nodeToDelete ));
+                    }
                 }
             }
-        }
+
 
         nodeToDelete = searchNodes.delMin();
         this.solutionBoards.add(nodeToDelete.getState());
@@ -132,7 +130,7 @@ public class Solver {
      *
      */
     public int moves(){
-        return initialBoard.manhattan();
+        return this.solutionBoards.size() - 1;
     }
 
 
@@ -160,7 +158,6 @@ public class Solver {
         Board initial = new Board(tiles);
         Solver solver = new Solver(initial);
         StdOut.println("Minimum number of moves = " + solver.moves());
-        System.out.println(solver.solutionBoards.size());
         for (Board board : solver.solution()) {
             StdOut.println(board);
        }
