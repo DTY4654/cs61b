@@ -26,33 +26,44 @@ public class Solver {
      */
 
     public Solver(Board initial){
+
         this.initialBoard = initial;
         this.searchNodes = new MinPQ<>(byPriority);
-
-
 
         SearchNode rootNode = new SearchNode(initial, 0, null);
         searchNodes.insert(rootNode);
 
+        SearchNode nodeToDelete;
 
-        while(!searchNodes.isEmpty() && !searchNodes.min().currentState.isGoal()) {
+        while(!searchNodes.min().currentState.isGoal()) {
 
-            SearchNode nodeToDelete = searchNodes.delMin();
-
+            nodeToDelete = searchNodes.delMin();
 
 
             for(Board neighbor : Board.neighbors(nodeToDelete.getState())){
-                if(nodeToDelete.previousNode!= null && ! neighbor.equals(nodeToDelete.previousNode.getState())){
+                if(!alreadyExisted(nodeToDelete, neighbor)){
                     searchNodes.insert(new SearchNode(neighbor, nodeToDelete.getMoves() + 1, nodeToDelete ));
                 }
             }
-
-            solutionBoards.add(nodeToDelete.currentState);
-
         }
 
+        nodeToDelete = searchNodes.delMin();
+        this.solutionBoards.add(nodeToDelete.getState());
+        while((nodeToDelete = nodeToDelete.getPreviousNode()) != null ){
+            this.solutionBoards.add(0, nodeToDelete.getState());
+        }
+
+    }
 
 
+    private boolean alreadyExisted(SearchNode prevNode, Board board){
+        SearchNode fatherNode = prevNode;
+        while((fatherNode = fatherNode.getPreviousNode()) != null){
+            if(fatherNode.getState() == board){
+                return true;
+            }
+        }
+        return false;
     }
 
 

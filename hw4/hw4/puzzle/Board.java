@@ -89,12 +89,7 @@ public class Board {
                 }
             }
         }
-
         return manhanttan;
-
-
-
-
     }
 
 
