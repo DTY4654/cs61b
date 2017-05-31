@@ -3,6 +3,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+
 /**
  * This class provides all code necessary to take a query box and produce
  * a query result. The getMapRaster method must return a Map containing all
@@ -16,57 +17,14 @@ public class Rasterer {
     //              your own QuadTree since there is no built-in quadtree in Java.
 
 
-    private final int degreeofLongitude = 288200;
-    private final double biggestLonDPP = degreeofLongitude * (MapServer.ROOT_LRLON - MapServer.ROOT_ULLON) / MapServer.TILE_SIZE;
-    private QuadTree initialQuadTree;
-    private final double bestPossibleLonDPP = 0.773;
-    private Set<QuadTree> returnTiles;
+    public static final int degreeofLongitude = 288200;
+    public static final double bestPossibleLonDPP = 0.773;
+    public final double biggestLonDPP = degreeofLongitude * (MapServer.ROOT_LRLON - MapServer.ROOT_ULLON) / MapServer.TILE_SIZE;
+    public QuadTree initialQuadTree;
+    public Set<QuadTree> returnTiles;
 
 
-    public class QuadTree{
-        private double upLeftLongitude;
-        private double lowerRightLongitude;
-        private double upLeftLatitude;
-        private double lowerRightLatitude;
-        private String imgFile;
-        private QuadTree UL, UR, LL, LR;
-
-
-        public QuadTree(double ulX, double lrX, double ulY, double lrY){
-            this.upLeftLongitude = ulX;
-            this.lowerRightLongitude = lrX;
-            this.upLeftLatitude = ulY;
-            this.lowerRightLatitude = lrY;
-            this.UL = new QuadTree(ulX,(ulX+lrX)/2,ulY,(ulY+lrY)/2);
-            this.UL.imgFile = this.imgFile + "1";
-            this.UR = new QuadTree((ulX+lrX)/2,lrX,ulY,(ulY+lrY)/2);
-            this.UR.imgFile = this.imgFile + "2";
-            this.LL = new QuadTree(ulX,(ulX+lrX)/2,(ulY+lrY)/2,lrY);
-            this.LL.imgFile = this.imgFile + "3";
-            this.LR = new QuadTree((ulX+lrX)/2,lrX,(ulY+lrY)/2,lrY);
-            this.LR.imgFile = this.imgFile + "4";
-        }
-
-
-        public boolean intersectsTile(double query_ulX, double query_ulY, double query_lrX, double query_lrY){
-
-            if( upLeftLongitude > query_lrX || upLeftLatitude < query_lrY ||
-                    lowerRightLongitude < query_ulX || lowerRightLatitude > query_ulY){
-                return false;
-            } else {
-                return true;
-            }
-        }
-
-
-//        public boolean lonDPPsmallerOrIsLeaf(double querieslonDPP){
-//
-//            double quadtreelonDPP = (lowerRightLongitude - upLeftLongitude) / MapServer.TILE_SIZE;
-//            return (quadtreelonDPP <= querieslonDPP) || (depth == 7);
-//        }
-
-
-    }
+    //    MapServer.ROOT_ULLON,MapServer.ROOT_ULLAT,MapServer.ROOT_ULLON,MapServer.ROOT_ULLAT
 
 
 
@@ -119,19 +77,13 @@ public class Rasterer {
 
 
 
-    /**
-     * 三种情况
-     * 1： ！P1 do nothing
-     * 2:  P1 but !P2, check its all children recursively
-     * 3:  P1 and P2, then this tile must be in the returned results.
-     */
-
     public void findIntersects (QuadTree qt, double query_ullon, double query_ullat,
-                                         double query_lrlon, double query_lrlat, int level){
-    //start from qt, and in given depth, return the tiles that intersects with the query box
+                                double query_lrlon, double query_lrlat, int level){
+        //start from qt, and in given depth, return the tiles that intersects with the query box
 
-        if( qt == null || qt.upLeftLongitude > query_lrlon || qt.upLeftLatitude < query_lrlat ||
-                qt.lowerRightLongitude < query_ullon || qt.lowerRightLatitude > query_ullat){
+
+        if( qt == null || qt.root.upLeftLongitude > query_lrlon || qt.root.upLeftLatitude < query_lrlat ||
+                qt.root.lowerRightLongitude < query_ullon || qt.root.lowerRightLatitude > query_ullat){
             return;
 
         } else {
@@ -139,17 +91,15 @@ public class Rasterer {
             if(level == 0){
                 returnTiles.add(qt);
             } else {
-                    level -= 1;
-                    findIntersects(qt.UL, query_ullon, query_ullat, query_lrlon, query_lrlat, level);
-                    findIntersects(qt.UR, query_ullon, query_ullat, query_lrlon, query_lrlat, level);
-                    findIntersects(qt.LL, query_ullon, query_ullat, query_lrlon, query_lrlat, level);
-                    findIntersects(qt.LR, query_ullon, query_ullat, query_lrlon, query_lrlat, level);
+                level -= 1;
+                findIntersects(new QuadTree(qt.root.UL), query_ullon, query_ullat, query_lrlon, query_lrlat, level);
+                findIntersects(new QuadTree(qt.root.UR), query_ullon, query_ullat, query_lrlon, query_lrlat, level);
+                findIntersects(new QuadTree(qt.root.LL), query_ullon, query_ullat, query_lrlon, query_lrlat, level);
+                findIntersects(new QuadTree(qt.root.LR), query_ullon, query_ullat, query_lrlon, query_lrlat, level);
             }
         }
 
     }
-
-
 
 
     /**
@@ -159,11 +109,11 @@ public class Rasterer {
      *
      */
 
-
     public Map<String, Object> getMapRaster(Map<String, Double> params) {
 
         System.out.println(params);
         System.out.println(biggestLonDPP);
+
 
         double query_ullon = params.get("ullon");
         double query_ullat = params.get("ullat");
@@ -171,17 +121,17 @@ public class Rasterer {
         double query_lrlat = params.get("lrlat");
         double query_width = params.get("w");
 
-
         Map<String, Object> results = new HashMap<>();
-        Set<QuadTree> tilesSets;
+
         String[][] tiles = new String [][] {};
 
-        double queryLonDPP = Math.abs( query_lrlon - query_ullon ) / query_width;
-        QuadTree initialQuadTree = new QuadTree(MapServer.ROOT_ULLON, MapServer.ROOT_LRLON, MapServer.ROOT_ULLAT, MapServer.ROOT_LRLAT);
+        double queryLonDPP = degreeofLongitude * Math.abs( query_lrlon - query_ullon ) / query_width;
         double bestLonDPP = biggestLonDPP;
         int depthTraversed = 0;
+        initialQuadTree = new QuadTree(new QuadTree.Node(MapServer.ROOT_ULLON, MapServer.ROOT_LRLAT,MapServer.ROOT_LRLON,MapServer.ROOT_LRLAT,queryLonDPP));
 
-        if(!initialQuadTree.intersectsTile(query_ullon,query_ullat,query_lrlon,query_lrlat)){
+
+        if(!initialQuadTree.intersectsQueryBox(query_ullon,query_ullat,query_lrlon,query_lrlat)){
             return null;
         } else{
             while( bestLonDPP > queryLonDPP && bestLonDPP > bestPossibleLonDPP){
@@ -190,9 +140,12 @@ public class Rasterer {
             }
         }
 
+        System.out.println(bestLonDPP);
         findIntersects(initialQuadTree,query_ullon,query_ullat,query_lrlon,query_lrlat, depthTraversed);
-        System.out.println(returnTiles);
 
+
+
+        System.out.println(returnTiles.size());
 
         results.put("render_grid", tiles);
         results.put("raster_ul_lon", 313);
@@ -202,7 +155,24 @@ public class Rasterer {
         results.put("depth", depthTraversed);
         results.put("query_success", true);
 
+
         return results;
+
+
+    }
+
+
+    public static void main(String[] args) {
+        Rasterer rasterer = new Rasterer("img/");
+        Map<String, Double> params = new HashMap<>();
+        params.put("ullon",-122.30410170759153);
+        params.put("ullat",37.870213571328854);
+        params.put("lrlon",-122.2104604264636);
+        params.put("lrlat",37.8318576119893);
+        params.put("w",1091.0);
+        params.put("h",566.0);
+        Map<String, Object> rasteredImgParams = rasterer.getMapRaster(params);
+        System.out.println(params);
     }
 
 
