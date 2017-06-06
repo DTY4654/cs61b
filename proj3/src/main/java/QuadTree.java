@@ -1,5 +1,4 @@
-
-
+import java.util.ArrayList;
 
 /**
  * Created by GritShiva on 2017/5/30 0030.
@@ -19,14 +18,7 @@ public class QuadTree{
             root = insert(root,ulX,lrX,ulY,lrY,imgFile);
         }
 
-    /**
-     * inert(1,a,c,v,d,1234)
-     * insert(12,a,c,v,d,1234)
-     * insert(123,a,c,v,d,1234)
-     *
-     *
-     *
-     */
+
         private Node insert(Node h,double ulX, double lrX, double ulY, double lrY, String imgFile){
 
             int num = Integer.parseInt(imgFile);
@@ -34,6 +26,10 @@ public class QuadTree{
             while( quadrant >= 10){
                 quadrant /= 10;
             }
+
+            //String substring(int beginIndex): Returns the substring starting from the specified
+            // index(beginIndex) till the end of the string.
+            // For e.g. "Chaitanya".substring(2) would return "aitanya".
 
             if(num >= 10){
                 num = Integer.parseInt(imgFile.substring(1));
@@ -56,12 +52,29 @@ public class QuadTree{
 
         }
 
+        public ArrayList<Node> getNodes(){
+
+
+        }
+
+        public ArrayList<Node> helpGetNodes(){
+
+
+        }
+
+        public String[][] getImages(){
+
+
+        }
+
+
+        public QueryBox getQB(){
+
+        }
 
 
 
-
-
-        public static class Node implements Comparable<Node>{
+        public static class Node implements Comparable<Node> {
 
             double upLeftLongitude;
             double lowerRightLongitude;
@@ -70,36 +83,42 @@ public class QuadTree{
             String imgFile;
             Node UL, UR, LL, LR;
 
-            Node(double ulX, double lrX, double ulY, double lrY, String imgFile){
+            Node(double ulX, double lrX, double ulY, double lrY, String imgFile) {
                 this.upLeftLongitude = ulX;
                 this.upLeftLatitude = ulY;
                 this.lowerRightLongitude = lrX;
                 this.lowerRightLatitude = lrY;
                 this.imgFile = imgFile;
-
-
-
-//                    this.UL = new Node(ulX,(ulX+lrX)/2,ulY,(ulY+lrY)/2,threshold);
-//                    this.UL.imgFile = this.imgFile + "1";
-//                    this.UR = new Node((ulX+lrX)/2,lrX,ulY,(ulY+lrY)/2,threshold);
-//                    this.UR.imgFile = this.imgFile + "2";
-//                    this.LL = new Node(ulX,(ulX+lrX)/2,(ulY+lrY)/2,lrY,threshold);
-//                    this.LL.imgFile = this.imgFile + "3";
-//                    this.LR = new Node((ulX+lrX)/2,lrX,(ulY+lrY)/2,lrY,threshold);
-//                    this.LR.imgFile = this.imgFile + "4";
-
             }
 
-            double getLonDPP(double ulX, double lrX, double ulY, double lrY){
-                return Rasterer.degreeofLongitude * Math.abs( lrX - ulX ) / MapServer.TILE_SIZE ;
+            double getLonDPP(double ulX, double lrX, double ulY, double lrY) {
+                return Rasterer.degreeofLongitude * Math.abs(lrX - ulX) / MapServer.TILE_SIZE;
             }
 
 
             @Override
             public int compareTo(Node o) {
-                return 0;
+                if (this.upLeftLatitude == o.upLeftLatitude) {
+                    if(this.upLeftLongitude < o.upLeftLongitude){
+                        return  -1;
+                    }else {
+                        return 1;
+                    }
+                }else{
+                    if(this.upLeftLatitude > o.upLeftLatitude){
+                        return -1;
+                    }else{
+                        return  1;
+                    }
+                }
             }
+
+            public String getImgFile(){
+                return this.imgFile;
+            }
+
         }
+
 
 
         public boolean intersectsQueryBox(double query_ulX, double query_ulY, double query_lrX, double query_lrY){
