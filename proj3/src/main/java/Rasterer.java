@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -15,23 +16,24 @@ import java.util.Set;
 public class Rasterer {
     // Recommended: QuadTree instance variable. You'll need to make
     //              your own QuadTree since there is no built-in quadtree in Java.
-
-
-    public static final int degreeofLongitude = 288200;
-    public static final double bestPossibleLonDPP = 0.773;
-    public final double biggestLonDPP = degreeofLongitude * (MapServer.ROOT_LRLON - MapServer.ROOT_ULLON) / MapServer.TILE_SIZE;
-    public QuadTree initialQuadTree;
-    public Set<QuadTree> returnTiles;
-
-
-    //    MapServer.ROOT_ULLON,MapServer.ROOT_ULLAT,MapServer.ROOT_ULLON,MapServer.ROOT_ULLAT
-
+    public static final double ROOT_ULLAT = 37.892195547244356, ROOT_ULLON = -122.2998046875,
+            ROOT_LRLAT = 37.82280243352756, ROOT_LRLON = -122.2119140625;
+    private static boolean initialized = false;
+    /** The tile images are in the IMG_ROOT folder. */
+    private String IMG_ROOT ;
+    public QuadTree imgTree;
 
 
     /** imgRoot is the name of the directory containing the images.
      *  You may not actually need this for your class. */
     public Rasterer(String imgRoot) {
         // YOUR CODE HERE
+        if(initialized){
+            return;
+        }
+        IMG_ROOT = imgRoot;
+        imgTree = new QuadTree(ROOT_ULLON,ROOT_ULLAT,ROOT_LRLON,ROOT_LRLAT,IMG_ROOT);
+        initialized = true;
     }
 
     /**
@@ -74,106 +76,29 @@ public class Rasterer {
      */
 
 
-
-
-
-    public void findIntersects (QuadTree qt, double query_ullon, double query_ullat,
-                                double query_lrlon, double query_lrlat, int level){
-        //start from qt, and in given depth, return the tiles that intersects with the query box
-
-
-        if( qt == null || qt.root.upLeftLongitude > query_lrlon || qt.root.upLeftLatitude < query_lrlat ||
-                qt.root.lowerRightLongitude < query_ullon || qt.root.lowerRightLatitude > query_ullat){
-            return;
-
-        } else {
-
-            if(level == 0){
-                returnTiles.add(qt);
-            } else {
-                level -= 1;
-                findIntersects(new QuadTree(qt.root.UL), query_ullon, query_ullat, query_lrlon, query_lrlat, level);
-                findIntersects(new QuadTree(qt.root.UR), query_ullon, query_ullat, query_lrlon, query_lrlat, level);
-                findIntersects(new QuadTree(qt.root.LL), query_ullon, query_ullat, query_lrlon, query_lrlat, level);
-                findIntersects(new QuadTree(qt.root.LR), query_ullon, query_ullat, query_lrlon, query_lrlat, level);
-            }
-        }
-
-    }
-
-
-    /**
-     * The problem of finding the correct images for a given query is thus equivalent to
-     * going to the shallowest level whose LonDPP is less than or equal to the query box,
-     * and finding all images at that level that intersect the query box.
-     *
-     */
-
     public Map<String, Object> getMapRaster(Map<String, Double> params) {
 
-        System.out.println(params);
-        System.out.println(biggestLonDPP);
+        RasteredImages rasteredImages = imgTree.getRasteredImages(params.get("ullon"), params.get("ullat"),
+                params.get("lrlon"), params.get("lrlat"), params.get("w"),params.get("h"));
 
-
-        double query_ullon = params.get("ullon");
-        double query_ullat = params.get("ullat");
-        double query_lrlon = params.get("lrlon");
-        double query_lrlat = params.get("lrlat");
-        double query_width = params.get("w");
-
-        Map<String, Object> results = new HashMap<>();
-
-        String[][] tiles = new String [][] {};
-
-        double queryLonDPP = degreeofLongitude * Math.abs( query_lrlon - query_ullon ) / query_width;
-        double bestLonDPP = biggestLonDPP;
-        int depthTraversed = 0;
-        initialQuadTree = new QuadTree(new QuadTree.Node(MapServer.ROOT_ULLON, MapServer.ROOT_LRLAT,MapServer.ROOT_LRLON,MapServer.ROOT_LRLAT,queryLonDPP));
-
-
-        if(!initialQuadTree.intersectsQueryBox(query_ullon,query_ullat,query_lrlon,query_lrlat)){
-            return null;
-        } else{
-            while( bestLonDPP > queryLonDPP && bestLonDPP > bestPossibleLonDPP){
-                bestLonDPP = bestLonDPP / 2;
-                depthTraversed += 1;
-            }
-        }
-
-        System.out.println(bestLonDPP);
-        findIntersects(initialQuadTree,query_ullon,query_ullat,query_lrlon,query_lrlat, depthTraversed);
-
-
-
-        System.out.println(returnTiles.size());
-
-        results.put("render_grid", tiles);
-        results.put("raster_ul_lon", 313);
-        results.put("raster_ul_lat", 37.87701580361881 );
-        results.put("raster_lr_lon", -122.24006652832031 );
-        results.put("raster_lr_lat", 37.87538940251607 );
-        results.put("depth", depthTraversed);
-        results.put("query_success", true);
-
+        Map<String,Object> results = rasteredImages.getRasteredImgParams();
 
         return results;
 
-
     }
 
 
-    public static void main(String[] args) {
-        Rasterer rasterer = new Rasterer("img/");
-        Map<String, Double> params = new HashMap<>();
-        params.put("ullon",-122.30410170759153);
-        params.put("ullat",37.870213571328854);
-        params.put("lrlon",-122.2104604264636);
-        params.put("lrlat",37.8318576119893);
-        params.put("w",1091.0);
-        params.put("h",566.0);
-        Map<String, Object> rasteredImgParams = rasterer.getMapRaster(params);
-        System.out.println(params);
-    }
-
+//    public static void main(String[] args) {
+//        Rasterer rasterer = new Rasterer("img/");
+//        HashMap<String, Double> params = new HashMap<>();
+//        params.put("ullon",-122.30410170759153);
+//        params.put("ullat",37.870213571328854);
+//        params.put("lrlon",-122.2104604264636);
+//        params.put("lrlat",37.8318576119893);
+//        params.put("w",1085.0);
+//        params.put("h",566.0);
+//        Map<String, Object> rasteredImgParams = rasterer.getMapRaster(params);
+//        System.out.println(rasteredImgParams);
+//    }
 
 }
