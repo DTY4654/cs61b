@@ -38,6 +38,35 @@ public class GraphDB {
         clean();
     }
 
+
+    static class Node(){
+
+
+    }
+
+    static class Edge(){
+
+
+    }
+
+    void addNode(){
+
+
+    }
+
+
+    void addEdge(){
+
+
+
+    }
+
+
+    void removeNode(){
+
+
+
+    }
     /**
      * Helper to process strings into their "cleaned" form, ignoring punctuation and capitalization.
      * @param s Input string.

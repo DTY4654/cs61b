@@ -64,12 +64,16 @@ public class GraphBuildingHandler extends DefaultHandler {
         if (qName.equals("node")) {
             /* We encountered a new <node...> tag. */
             activeState = "node";
-//            System.out.println("Node id: " + attributes.getValue("id"));
-//            System.out.println("Node lon: " + attributes.getValue("lon"));
-//            System.out.println("Node lat: " + attributes.getValue("lat"));
+            System.out.println("Node id: " + attributes.getValue("id"));
+            System.out.println("Node lon: " + attributes.getValue("lon"));
+            System.out.println("Node lat: " + attributes.getValue("lat"));
 
             /* TODO Use the above information to save a "node" to somewhere. */
             /* Hint: A graph-like structure would be nice. */
+
+
+
+
 
         } else if (qName.equals("way")) {
             /* We encountered a new <way...> tag. */
